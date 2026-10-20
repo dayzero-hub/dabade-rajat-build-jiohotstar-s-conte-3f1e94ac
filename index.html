@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content rail</title>
+<style>
+  body { margin: 0; padding: 2rem; font-family: system-ui, sans-serif; background: #0f1014; color: #fff; }
+  .rail h2 { margin: 0 0 1rem; font-size: 1.25rem; }
+
+  .viewport { overflow: hidden; }
+
+  /* One rule for any page count: a page is the track's width plus one gap. */
+  .track {
+    --gap: 1rem;
+    --page: 0;
+    display: flex;
+    gap: var(--gap);
+    margin: 0; padding: 0; list-style: none;
+    transform: translateX(calc(var(--page) * -1 * (100% + var(--gap))));
+    transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .card {
+    flex: 0 0 calc((100% - 3 * var(--gap)) / 4);
+    aspect-ratio: 2 / 3;
+    border-radius: 8px;
+    display: flex; align-items: flex-end;
+    padding: 0.75rem; box-sizing: border-box;
+    font-weight: 600;
+    background: hsl(calc(var(--i) * 30) 60% 40%);
+  }
+
+  .controls { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  .controls button {
+    font: inherit; color: inherit; background: #2a2c33;
+    border: 0; border-radius: 50%; width: 2.5rem; height: 2.5rem; cursor: pointer;
+  }
+  .controls button:disabled { opacity: 0.3; cursor: default; }
+
+  @media (prefers-reduced-motion: reduce) { .track { transition: none; } }
+</style>
+</head>
+<body>
+<section class="rail" aria-label="Trending now">
+  <h2>Trending now</h2>
+  <div class="viewport">
+    <ul class="track">
+      <li class="card" style="--i:0">Sacred Games</li>
+      <li class="card" style="--i:1">Aarya</li>
+      <li class="card" style="--i:2">Special Ops</li>
+      <li class="card" style="--i:3">The Night Manager</li>
+      <li class="card" style="--i:4">Criminal Justice</li>
+      <li class="card" style="--i:5">Hostages</li>
+      <li class="card" style="--i:6">Taaza Khabar</li>
+      <li class="card" style="--i:7">Dahan</li>
+      <li class="card" style="--i:8">Grahan</li>
+      <li class="card" style="--i:9">Human</li>
+      <li class="card" style="--i:10">Kaala Paani</li>
+      <li class="card" style="--i:11">The Freelancer</li>
+    </ul>
+  </div>
+  <div class="controls">
+    <button class="prev" aria-label="Previous page">&#8249;</button>
+    <button class="next" aria-label="Next page">&#8250;</button>
+  </div>
+</section>
+<script>
+  // Ends are disabled, not wrapping: a wrap would slide backwards across every page.
+  const track = document.querySelector('.track');
+  const prev = document.querySelector('.prev');
+  const next = document.querySelector('.next');
+  const pages = Math.ceil(track.children.length / 4);
+  let page = 0;
+
+  function go(p) {
+    page = p;
+    track.style.setProperty('--page', page);
+    prev.disabled = page === 0;
+    next.disabled = page === pages - 1;
+  }
+
+  prev.addEventListener('click', () => go(page - 1));
+  next.addEventListener('click', () => go(page + 1));
+  go(0);
+</script>
+</body>
+</html>
